@@ -144,3 +144,8 @@ output "public_ip" {
   value = aws_eip.eip.public_ip
   description = "The public IP address of the EC2 instance"
 }
+
+resource "local_file" "inventory" {
+  content = "[webservers]\n${aws_eip.eip.public_ip}"
+  filename = "${path.module}/ansible/inventory"
+}
