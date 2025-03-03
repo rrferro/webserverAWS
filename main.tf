@@ -131,7 +131,16 @@ resource "aws_key_pair" "generated" {
   }
 }
 
-output "private_key" {
-  value     = tls_private_key.generated.private_key_pem
-  sensitive = true
+resource "aws_eip" "eip" {
+  domain = "vpc"
+}
+
+resource "aws_eip_association" "eip_association" {
+  instance_id = aws_instance.example.id
+  allocation_id = aws_eip.eip.id
+}
+
+output "public_ip" {
+  value = aws_eip.eip.public_ip
+  description = "The public IP address of the EC2 instance"
 }
