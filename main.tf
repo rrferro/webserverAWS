@@ -4,10 +4,6 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0" # Or the latest version you want to use
     }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "3.1.0"
-    }
   }
 }
 
@@ -70,8 +66,12 @@ resource "aws_instance" "example" {
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.my_subnet.id # Launch in our subnet
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id] # Add security group
-  key_name                    = aws_key_pair.generated.key_name
+  key_name = "webserverAWS"
 
+  provisioner "local-exec" {
+    command = "aws ec2 import-key-pair --key-name webserverAWS --public-key-material file://mwebserverAWS.pub"
+    on_failure = continue
+  }
   tags = {
     Name = "example-instance"
   }
