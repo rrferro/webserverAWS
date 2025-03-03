@@ -149,3 +149,9 @@ resource "local_file" "inventory" {
   content = "[webservers]\n${aws_eip.eip.public_ip}"
   filename = "${path.module}/ansible/inventory"
 }
+
+#generating output for the publix key
+output "public_key_openssh" {
+  value       = tls_private_key.generated.public_key_openssh
+  description = "The public key in OpenSSH format"
+}
