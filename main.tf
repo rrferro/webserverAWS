@@ -111,26 +111,6 @@ resource "aws_security_group" "allow_ssh_http" {
   }
 }
 
-#This will generate an RSA private key
-resource "tls_private_key" "generated" {
-  algorithm = "RSA"
-}
-
-#Will save the key into our local file system
-resource "local_file" "private_key_pem" {
-  content  = tls_private_key.generated.private_key_pem
-  filename = "MyAWSKey.pem"
-}
-
-resource "aws_key_pair" "generated" {
-  key_name   = "MyAWSKey"
-  public_key = tls_private_key.generated.public_key_openssh
-
-  lifecycle {
-    ignore_changes = [key_name]
-  }
-}
-
 resource "aws_eip" "eip" {
   domain = "vpc"
 }
@@ -148,10 +128,4 @@ output "public_ip" {
 resource "local_file" "inventory" {
   content = "[webservers]\n${aws_eip.eip.public_ip}"
   filename = "${path.module}/ansible/inventory"
-}
-
-#generating output for the publix key
-output "public_key_openssh" {
-  value       = tls_private_key.generated.public_key_openssh
-  description = "The public key in OpenSSH format"
 }
