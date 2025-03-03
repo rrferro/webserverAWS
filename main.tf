@@ -69,7 +69,7 @@ resource "aws_instance" "example" {
   key_name = "webserverAWS"
 
   provisioner "local-exec" {
-    command = "aws ec2 import-key-pair --key-name webserverAWS --public-key-material file://mwebserverAWS.pub"
+    command = "aws ec2 import-key-pair --key-name webserverAWS --public-key-material file://webserverAWS.pub"
     on_failure = continue
   }
   tags = {
