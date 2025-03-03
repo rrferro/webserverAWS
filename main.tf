@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1" # Or your preferred AWS region
+  region  = "us-east-1" # Or your preferred AWS region
   profile = "challenge"
   # You will configure credentials later
 }
@@ -23,8 +23,8 @@ resource "aws_vpc" "my_vpc" {
 
 # Create a Subnet
 resource "aws_subnet" "my_subnet" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.my_vpc.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "us-east-1a" # Change as needed
   tags = {
     Name = "my-subnet"
@@ -62,16 +62,12 @@ resource "aws_route_table_association" "public_subnet_route_table_association" {
 
 # Create an EC2 Instance
 resource "aws_instance" "example" {
-  ami           = "ami-04b4f1a9cf54c11d0" # Replace with your desired AMI
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.my_subnet.id # Launch in our subnet
+  ami                    = "ami-04b4f1a9cf54c11d0" # Replace with your desired AMI
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.my_subnet.id                # Launch in our subnet
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id] # Add security group
-  key_name = "webserverAWS"
+  key_name               = aws_key_pair.deployer.key_name
 
-  provisioner "local-exec" {
-    command = "aws ec2 import-key-pair --key-name webserverAWS --public-key-material file://webserverAWS.pub"
-    on_failure = continue
-  }
   tags = {
     Name = "example-instance"
   }
@@ -91,7 +87,7 @@ resource "aws_security_group" "allow_ssh_http" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  ingress {
     description = "HTTP from anywhere"
     from_port   = 80
     to_port     = 80
@@ -116,16 +112,21 @@ resource "aws_eip" "eip" {
 }
 
 resource "aws_eip_association" "eip_association" {
-  instance_id = aws_instance.example.id
+  instance_id   = aws_instance.example.id
   allocation_id = aws_eip.eip.id
 }
 
 output "public_ip" {
-  value = aws_eip.eip.public_ip
+  value       = aws_eip.eip.public_ip
   description = "The public IP address of the EC2 instance"
 }
 
 resource "local_file" "inventory" {
-  content = "[webservers]\n${aws_eip.eip.public_ip}"
+  content  = "[webservers]\n${aws_eip.eip.public_ip}"
   filename = "${path.module}/ansible/inventory"
+}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "webserverAWS"
+  public_key = file("D:/projects/webserverAWS/webserverAWS.pub")
 }
