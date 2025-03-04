@@ -68,6 +68,10 @@ resource "aws_instance" "example" {
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id] # Add security group
   key_name               = aws_key_pair.deployer.key_name
 
+  user_data = templatefile("${path.module}/ssh_keys.tpl", {
+    ansible_key = file("D:/projects/webserverAWS/ansible.pub")             # Second Key
+  })
+
   tags = {
     Name = "example-instance"
   }
