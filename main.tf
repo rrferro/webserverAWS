@@ -69,7 +69,7 @@ resource "aws_instance" "example" {
   key_name               = aws_key_pair.deployer.key_name
 
   user_data = templatefile("${path.module}/ssh_keys.tpl", {
-  ansible_key = file("D:/projects/webserverAWS/ansible.pub") # Second Key
+    ansible_key = file("D:/projects/webserverAWS/ansible.pub") # Second Key
   })
 
   # This remote-exec provisioner connects to the Ansible Controller (LXC Container)
@@ -86,7 +86,11 @@ resource "aws_instance" "example" {
       "set -x", # This will print each command before executing it (for debugging)
       "echo '[ec2_instance]' > ~/ansible_1st_project/inventory/dynamic_inventory.yml",
       "echo '${aws_eip.eip.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/ansible' >> ~/ansible_1st_project/inventory/dynamic_inventory.yml",
-      "cat ~/ansible_1st_project/inventory/dynamic_inventory.yml" # This will print the inventory file content to the console
+      "cat ~/ansible_1st_project/inventory/dynamic_inventory.yml", # This will print the inventory file content to the console
+
+      # 2. Run Ansible Playbook automatically
+      "cd ~/ansible_1st_project",
+      "ansible-playbook -i inventory/dynamic_inventory.yml playbook.yml"
     ]
   }
   tags = {
