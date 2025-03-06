@@ -81,16 +81,11 @@ resource "aws_instance" "example" {
       private_key = file("C:\\Users\\Killua\\.ssh\\windows") # Windows SSH Key
       host        = "192.168.0.15"                           # LXC IP
     }
-
     inline = [
       "set -x", # This will print each command before executing it (for debugging)
       "echo '[ec2_instance]' > ~/ansible_1st_project/inventory/dynamic_inventory.yml",
       "echo '${aws_eip.eip.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/ansible' >> ~/ansible_1st_project/inventory/dynamic_inventory.yml",
       "cat ~/ansible_1st_project/inventory/dynamic_inventory.yml", # This will print the inventory file content to the console
-
-      # 2. Run Ansible Playbook automatically
-      "cd ~/ansible_1st_project",
-      "ansible-playbook -i inventory/dynamic_inventory.yml playbook.yml"
     ]
   }
   tags = {
