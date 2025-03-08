@@ -146,7 +146,17 @@ resource "local_file" "inventory" {
   filename = "${path.module}/ansible/inventory"
 }
 
-resource "aws_key_pair" "deployer" {
-  key_name   = "webserverAWS"
-  public_key = file("D:/projects/webserverAWS/webserverAWS.pub")
+variable "public_key" {
+  type    = string
+  default = ""
 }
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = var.public_key
+}
+
+#resource "aws_key_pair" "deployer" {
+  #key_name   = "webserverAWS"
+  #public_key = file("D:/projects/webserverAWS/webserverAWS.pub")
+#}
