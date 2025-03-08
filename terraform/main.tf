@@ -1,4 +1,13 @@
 terraform {
+  backend "s3" {
+    bucket = "rrferro-terraform-state-bucket"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+    encrypt = true
+  }
+}
+
+terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -8,8 +17,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = "us-east-1" # Or your preferred AWS region
-  # You will configure credentials later
+  region = var.aws_region
 }
 
 # Create a VPC
