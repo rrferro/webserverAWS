@@ -18,6 +18,7 @@ resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
     Name = "my-vpc"
+    Environment = "demo_environment"
   }
 }
 
@@ -69,16 +70,19 @@ resource "aws_instance" "example" {
   key_name               = aws_key_pair.deployer.key_name
 
   user_data = templatefile("${path.module}/ssh_keys.tpl", {
-    ansible_key = file("D:/projects/webserverAWS/ansible.pub") # Second Key
+    ansible_public_key = var.ansible_public_key
+    #ansible_key = resource.github_actions_secret.ansible_key.secret_name
+    #ansible_key = file("D:/projects/webserverAWS/ansible.pub") # Second Key
   })
 
   # This remote-exec provisioner connects to the Ansible Controller (LXC Container)
   # to automatically generate the dynamic inventory file for EC2 instances
-  provisioner "remote-exec" {
+  /* provisioner "remote-exec" {
     connection {
       type        = "ssh"
       user        = "root"
-      private_key = file("C:\\Users\\Killua\\.ssh\\windows") # Windows SSH Key
+      private_key = var.windows_private_key
+      #private_key = file("C:\\Users\\Killua\\.ssh\\windows") # Windows SSH Key
       host        = "192.168.0.15"                           # LXC IP
     }
     inline = [
@@ -87,7 +91,7 @@ resource "aws_instance" "example" {
       "echo '${aws_eip.eip.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/ansible' >> ~/ansible_1st_project/inventory/dynamic_inventory.yml",
       "cat ~/ansible_1st_project/inventory/dynamic_inventory.yml", # This will print the inventory file content to the console
     ]
-  }
+  } */
   tags = {
     Name = "example-instance"
   }
@@ -136,19 +140,9 @@ resource "aws_eip_association" "eip_association" {
   allocation_id = aws_eip.eip.id
 }
 
-output "public_ip" {
-  value       = aws_eip.eip.public_ip
-  description = "The public IP address of the EC2 instance"
-}
-
 resource "local_file" "inventory" {
   content  = "[webservers]\n${aws_eip.eip.public_ip}"
   filename = "${path.module}/ansible/inventory"
-}
-
-variable "public_key" {
-  type    = string
-  default = ""
 }
 
 resource "aws_key_pair" "deployer" {
