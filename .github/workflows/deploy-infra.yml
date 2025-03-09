@@ -3,7 +3,8 @@ name: Deploy Infrastructure
 on:
   push:
     branches:
-      - main # This means the pipeline will only run if code is pushed to the main branch
+      - main   # Runs after a new push
+  workflow_dispatch: # Allows manual execution
 
 jobs:
   terraform:
