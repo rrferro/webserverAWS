@@ -21,6 +21,11 @@ jobs:
         with:
           terraform_version: 1.7.3 # Or your desired version
 
+      - name: Echo Secrets (Debug)
+        run: |
+          echo "AWS_ACCESS_KEY_ID (first 4): ${{ secrets.AWS_ACCESS_KEY_ID:0:4 }}"
+          echo "AWS_SECRET_ACCESS_KEY (length): ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

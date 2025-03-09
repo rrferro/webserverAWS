@@ -1,4 +1,4 @@
-name: CICD Pipeline
+name: Deploy Infrastructure
 
 on:
   push:
