@@ -7,7 +7,3 @@ output "public_ip" {
   value       = aws_eip.eip.public_ip
   description = "The public IP address of the EC2 instance"
 }
-
-output "ansible_public_key_value" {
-  value = var.ansible_public_key
-}
