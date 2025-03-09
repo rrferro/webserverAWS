@@ -1,13 +1,4 @@
 terraform {
-  backend "s3" {
-    bucket = "rrferro-terraform-state-bucket"
-    key    = "terraform.tfstate"
-    region = "us-east-1"
-    encrypt = true
-  }
-}
-
-terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
