@@ -19,7 +19,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.7.3 # Or your desired version
+          terraform_version: 1.7.3 # Or your desired veersion
 
       - name: Echo Secrets (Debug)
         run: |
