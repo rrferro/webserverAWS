@@ -23,7 +23,7 @@ jobs:
 
       - name: Echo Secrets (Debug)
         run: |
-          echo "AWS_ACCESS_KEY_ID (first 4): ${{ secrets.AWS_ACCESS_KEY_ID:0:4 }}"
+          echo "AWS_ACCESS_KEY_ID (first 4): ${{ substring(secrets.AWS_ACCESS_KEY_ID, 0, 4) }}"
           echo "AWS_SECRET_ACCESS_KEY (length): ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
       - name: Configure AWS credentials
