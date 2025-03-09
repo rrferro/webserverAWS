@@ -40,7 +40,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          cd ${{ github.workspace }}/terraform
+          cd terraform
           terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
